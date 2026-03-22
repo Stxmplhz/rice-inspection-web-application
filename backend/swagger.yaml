@@ -1,0 +1,273 @@
+openapi: 3.0.0
+info:
+  title: Rice Inspection API
+  description: API for the EASYRICE Junior Exam (Rice Inspection Application)
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Local Development Server
+
+tags:
+  - name: Standard
+    description: API for retrieving rice inspection standards
+  - name: History
+    description: API for managing rice inspection history
+
+paths:
+  /standard:
+    get:
+      summary: Get all standards
+      description: Fetches standard data from the external source (https://easyrice-es-trade-data.s3.ap-southeast-1.amazonaws.com/standards.json).
+      tags:
+        - Standard
+      responses:
+        '200':
+          description: A list of standards successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Standard'
+        '500':
+          description: Cannot fetch standards
+
+  /history:
+    get:
+      summary: Get all history or search by ID
+      description: Retrieves all history records, ordered by creation date descending. Can optionally filter by ID using ILIKE match.
+      tags:
+        - History
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          description: Optional. Search history containing this ID string.
+      responses:
+        '200':
+          description: A list of inspection histories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/History'
+        '500':
+          description: Cannot fetch history list
+
+    post:
+      summary: Create a new inspection history
+      description: Calculates rice inspection results from rawData based on the selected standard and saves to the database.
+      tags:
+        - History
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - standardId
+                - rawData
+              properties:
+                name:
+                  type: string
+                  example: "Test Inspection 1"
+                standardId:
+                  type: string
+                  example: "1"
+                note:
+                  type: string
+                  example: "Test note"
+                price:
+                  type: number
+                  format: float
+                  example: 12500.50
+                samplingPoints:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Front End", "Back End", "Other"]
+                samplingDate:
+                  type: string
+                  format: date-time
+                  example: "2023-10-22T18:00:00Z"
+                imageURL:
+                  type: string
+                  example: "https://easyrice-es-trade-data.s3.ap-southeast-1.amazonaws.com/example-rice.webp"
+                rawData:
+                  type: array
+                  description: Array of rice grain objects to be calculated
+                  items:
+                    type: object
+                    properties:
+                      length:
+                        type: number
+                      weight:
+                        type: number
+                      shape:
+                        type: string
+                      type:
+                        type: string
+      responses:
+        '201':
+          description: History created successfully
+        '400':
+          description: Standard not found
+        '500':
+          description: Internal Server Error
+
+    delete:
+      summary: Delete multiple histories
+      description: Deletes multiple inspection history records using an array of UUIDs.
+      tags:
+        - History
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  example: ["123e4567-e89b-12d3-a456-426614174000", "987fcdeb-51a2-43d7-9012-34567890abcd"]
+      responses:
+        '200':
+          description: Deleted successfully
+        '400':
+          description: IDs must be an array
+        '500':
+          description: Cannot delete selected history
+
+  /history/{id}:
+    get:
+      summary: Get history by ID
+      description: Retrieves a single inspection history record by its UUID.
+      tags:
+        - History
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The UUID of the history to retrieve
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/History'
+        '404':
+          description: History not found
+        '500':
+          description: Cannot fetch history detail
+
+    patch:
+      summary: Update history
+      description: Updates specific field of an existing history record.
+      tags:
+        - History
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The UUID of the history to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                samplingPoints:
+                  type: array
+                  items:
+                    type: string
+                samplingDate:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: History updated successfully
+        '500':
+          description: Cannot update history
+
+components:
+  schemas:
+    Standard:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        standardData:
+          type: array
+          items:
+            type: object
+            
+    History:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        standardName:
+          type: string
+        standardId:
+          type: string
+        note:
+          type: string
+          nullable: true
+        price:
+          type: number
+          format: float
+          nullable: true
+        samplingPoints:
+          type: array
+          items:
+            type: string
+          nullable: true
+        samplingDate:
+          type: string
+          format: date-time
+          nullable: true
+        totalSample:
+          type: integer
+        compositionResult:
+          type: object
+        defectResult:
+          type: object
+        imageURL:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

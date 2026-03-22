@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # ------------------ PostgreSQL Database ----------------------
+  db:
+    image: postgres:15-alpine
+    container_name: easyrice-db
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: easyrice-exam
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d easyrice-exam"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ------------------ Backend ----------------------
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: easyrice-backend
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://myuser:mypassword@db:5432/easyrice-exam?schema=public"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: sh -c "npm run db:push && npm run seed && npm run dev"
+
+volumes:
+  postgres_data:

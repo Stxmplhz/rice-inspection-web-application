@@ -16,3 +16,9 @@ export const formatThaiDateTime = (dateString: string) => {
         hour: '2-digit', minute: '2-digit', second: '2-digit',
     });
 };
+
+export const formatDateForDisplay = (dateStr: string) => {
+    if (!dateStr) return "";
+    const [year, month, day] = dateStr.split("-");
+    return `${day}/${month}/${year}`;
+};

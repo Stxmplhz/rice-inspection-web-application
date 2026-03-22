@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { historyService } from "../services/historyServices";
 import { Search, Plus, Trash2, Calendar } from "lucide-react";
+import { formatDateForDisplay } from "../utils/formatDateTime";
 
 const HistoryList = () => {
     const navigate = useNavigate();
@@ -118,45 +119,51 @@ const HistoryList = () => {
                             />
                         </div>
 
-                        {/* Form Date */}
+                        {/* From Date */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">From Date</label>
-                            <div className="relative flex items-center">
+                            <div className="relative flex items-center group h-9.5">
                                 <input 
-                                    type={fromDate ? "date" : "text"} 
-                                    onFocus={(e) => (e.target.type = "date")}
-                                    onBlur={(e) => {
-                                        if (!e.target.value) {
-                                            e.target.type = "text";
-                                        }
-                                    }}
-                                    placeholder="Please select From Date"
-                                    className="w-full px-3 py-2 border border-[#909090] rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent placeholder:text-[#909090] placeholder:font-semibold text-gray-600"
+                                    type="date" 
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                     value={fromDate}
                                     onChange={(e) => setFromDate(e.target.value)}
                                 />
-                                <Calendar size={18} className="absolute right-3 text-[#909090] pointer-events-none" />
+
+                                <div className="w-full h-full px-3 py-2 border border-[#909090] rounded-md bg-transparent flex justify-between items-center transition-colors">
+                                    <span className={`text-sm font-semibold ${fromDate ? "text-gray-600" : "text-[#909090]"}`}>
+                                        {fromDate ? (
+                                            formatDateForDisplay(fromDate)
+                                        ) : (
+                                            "Please select From Date"
+                                        )}
+                                    </span>
+                                    <Calendar size={18} className="text-[#909090]" />
+                                </div>
                             </div>
                         </div>
 
                         {/* To Date */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-gray-700">To Date</label>
-                            <div className="relative flex items-center">
+                            <div className="relative flex items-center group h-9.5">
                                 <input 
-                                    type={toDate ? "date" : "text"} 
-                                    onFocus={(e) => (e.target.type = "date")}
-                                    onBlur={(e) => {
-                                        if (!e.target.value) {
-                                            e.target.type = "text";
-                                        }
-                                    }}
-                                    placeholder="Please select To Date"
-                                    className="w-full px-3 py-2 border border-[#909090] rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent placeholder:text-[#909090] placeholder:font-semibold text-gray-600"
+                                    type="date" 
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                     value={toDate}
                                     onChange={(e) => setToDate(e.target.value)}
                                 />
-                                <Calendar size={18} className="absolute right-3 text-[#909090] pointer-events-none" />
+
+                                <div className="w-full h-full px-3 py-2 border border-[#909090] rounded-md bg-transparent flex justify-between items-center transition-colors">
+                                    <span className={`text-sm font-semibold ${toDate ? "text-gray-600" : "text-[#909090]"}`}>
+                                        {toDate ? (
+                                            formatDateForDisplay(toDate)
+                                        ) : (
+                                            "Please select To Date"
+                                        )}
+                                    </span>
+                                    <Calendar size={18} className="text-[#909090]" />
+                                </div>
                             </div>
                         </div>
                     </div>

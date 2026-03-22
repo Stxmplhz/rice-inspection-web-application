@@ -20,7 +20,7 @@ services:
       retries: 5
 
   # ------------------ Backend ----------------------
-  backend:
+backend:
     build: 
       context: ./backend
       dockerfile: Dockerfile
@@ -32,10 +32,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    command: sh -c "npm run db:push && npm run seed && npm run dev"
+    # volumes:
+    #   - ./backend:/app
+    #   - /app/node_modules
+    command: sh -c "npm run db:push && npm run seed && npx tsx src/index.ts"
 
 volumes:
   postgres_data:

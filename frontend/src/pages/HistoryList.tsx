@@ -144,9 +144,13 @@ const HistoryList = () => {
                             <label className="text-sm font-semibold text-gray-700">To Date</label>
                             <div className="relative flex items-center">
                                 <input 
-                                    type="text"
+                                    type={toDate ? "date" : "text"} 
                                     onFocus={(e) => (e.target.type = "date")}
-                                    onBlur={(e) => !e.target.value && (e.target.type = "text")}
+                                    onBlur={(e) => {
+                                        if (!e.target.value) {
+                                            e.target.type = "text";
+                                        }
+                                    }}
                                     placeholder="Please select To Date"
                                     className="w-full px-3 py-2 border border-[#909090] rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent placeholder:text-[#909090] placeholder:font-semibold text-gray-600"
                                     value={toDate}

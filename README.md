@@ -2,6 +2,12 @@
 
 A comprehensive web application developed for the EASYRICE Junior Exam.
 
+## Live Demo & Documentation
+
+* **Frontend (Production):** [https://rice-inspection-web-application.vercel.app/]
+* **Backend API (Production):** [https://rice-inspection-web-application.onrender.com]
+* **API Documentation (Swagger):** [https://rice-inspection-web-application.onrender.com/api-docs]
+
 ---
 
 ## Features
@@ -14,25 +20,47 @@ A comprehensive web application developed for the EASYRICE Junior Exam.
 - **Edit & Delete:** Manage your inspection history seamlessly.
 
 **Backend:**
-- RESTful APIs for handling Standards and History.
-- Advanced calculation engine to process `raw.json` against `standards.json`.
-- Automated Database Seeding (Mock data ready to use).
-- Comprehensive API Documentation via Swagger UI.
+- **RESTful APIs:** Efficient endpoints for handling Rice Standards and Inspection History.
+- **Calculation Engine:** Advanced logic to process `raw.json` against defined `standards.json`.
+- **Database Seeding:** Automated data seeding to ensure the system is ready for testing.
+- **Swagger UI:** Comprehensive and interactive API documentation.
 
 ## Tech Stack
 
-- **Frontend:** React (TypeScript), Tailwind CSS, React Router
-- **Backend:** Node.js, Express, TypeScript, Axios
-- **Database:** PostgreSQL, Drizzle ORM
-- **Infrastructure:** Docker & Docker Compose
+- **Frontend:** React (TypeScript), Tailwind CSS, Vite
+- **Backend:** Node.js, Express, TypeScript
+- **Database:** PostgreSQL (Hosted on **Neon.tech**), Drizzle ORM
+- **Deployment:** Docker, Render (Backend), Vercel (Frontend)
 
 ---
 
-##  How to Run the Web Application (Docker - Recommended)
+## How to Run Locally (Docker)
 
-Already configured a complete Docker environment. You **do not** need to install PostgreSQL or configure databases manually. The database is pre-populated with mock data upon initial run.
+The project is fully containerized. You **do not** need to install PostgreSQL or Node.js manually if you have Docker installed.
 
-1. **Clone the repository:**
-   ```bash
-   git clone <your-github-repo-url>
-   cd easyrice-rice-inspection
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/Stxmplhz/rice-inspection-web-application.git](https://github.com/Stxmplhz/rice-inspection-web-application.git)
+    cd rice-inspection-web-application
+    ```
+
+2.  **Start the application:**
+    ```bash
+    docker-compose up --build
+    ```
+    *This will automatically set up the database, run migrations, seed mock data, and start both the frontend and backend.*
+
+3.  **Access points:**
+    * **Frontend:** `http://localhost:5173`
+    * **Backend API:** `http://localhost:3000`
+    * **API Docs:** `http://localhost:3000/api-docs`
+
+---
+
+## Project Structure
+```text
+.
+├── backend/            # Express.js Server, Drizzle Schema & Seeders
+├── frontend/           # React App (Vite), Axios Instance & Components
+├── docker-compose.yml  # Local Environment Orchestration
+└── README.md           # Project Documentation
